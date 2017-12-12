@@ -1,5 +1,6 @@
 package gov.dvla.osl.EventSource;
 
+import gov.dvla.osl.EventSource.resources.BankingResource;
 import io.dropwizard.Application;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
@@ -24,6 +25,7 @@ public class EventSourceApplication extends Application<EventSourceConfiguration
     public void run(final EventSourceConfiguration configuration,
                     final Environment environment) {
         // TODO: implement application
+        environment.jersey().register(new BankingResource());
     }
 
 }
