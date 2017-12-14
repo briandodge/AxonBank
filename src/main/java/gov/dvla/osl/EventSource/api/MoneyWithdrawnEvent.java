@@ -1,29 +1,19 @@
 package gov.dvla.osl.EventSource.api;
 
-public class MoneyWithdrawnEvent {
+public class MoneyWithdrawnEvent extends BalanceUpdatedEvent{
 
-    String accountId;
     int amount;
-    int balance;
 
-    public MoneyWithdrawnEvent() {
-    }
+
+    public MoneyWithdrawnEvent() {     }
 
     public MoneyWithdrawnEvent(String accountId, int amount, int balance) {
-        this.accountId = accountId;
+        super(accountId, balance);
         this.amount = amount;
-        this.balance = balance;
-    }
-
-    public String getAccountId() {
-        return accountId;
     }
 
     public int getAmount() {
         return amount;
     }
 
-    public int getBalance() {
-        return balance;
-    }
 }

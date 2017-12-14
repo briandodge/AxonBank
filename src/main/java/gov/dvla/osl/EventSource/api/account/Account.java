@@ -1,14 +1,13 @@
 package gov.dvla.osl.EventSource.api.account;
 
-import gov.dvla.osl.EventSource.api.AccountCreatedEvent;
-import gov.dvla.osl.EventSource.api.CreateAccountCommand;
-import gov.dvla.osl.EventSource.api.MoneyWithdrawnEvent;
-import gov.dvla.osl.EventSource.api.WithdrawMoneyCommand;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import gov.dvla.osl.EventSource.api.*;
 import org.axonframework.commandhandling.CommandHandler;
 import org.axonframework.commandhandling.model.AggregateIdentifier;
 import org.axonframework.eventsourcing.EventSourcingHandler;
 
 import static org.axonframework.commandhandling.model.AggregateLifecycle.apply;
+
 
 public class Account {
 
@@ -34,6 +33,11 @@ public class Account {
         }
     }
 
+    @CommandHandler
+    public void handle(DepositMoneyCommand command) {
+        apply(new MoneyDepositEvent(accountId, command.getAmount(), balance + command.getAmount()));
+    }
+
 
     @EventSourcingHandler
     public void on(AccountCreatedEvent event) {
@@ -46,4 +50,20 @@ public class Account {
         this.balance = event.getBalance();
     }
 
+    @EventSourcingHandler
+    public void on(MoneyDepositEvent event) { this.balance = event.getBalance(); }
+
+
+    @JsonProperty
+    public String getAccountId() {
+        return accountId;
+    }
+    @JsonProperty
+    public int getBalance() {
+        return balance;
+    }
+    @JsonProperty
+    public int getOverdraftLimit() {
+        return overdraftLimit;
+    }
 }
