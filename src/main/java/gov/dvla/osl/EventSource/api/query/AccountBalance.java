@@ -9,15 +9,12 @@ public class AccountBalance {
     String accountId;
     int balance;
 
-
-
     public AccountBalance() {
     }
 
     public AccountBalance(String accountId, int balance) {
         this.accountId = accountId;
         this.balance = balance;
-
     }
 
     @JsonProperty

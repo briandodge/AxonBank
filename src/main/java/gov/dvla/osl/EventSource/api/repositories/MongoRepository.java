@@ -5,6 +5,8 @@ import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mongodb.MongoClient;
 import com.mongodb.MongoClientURI;
+import com.mongodb.client.MongoCollection;
+import com.mongodb.client.MongoDatabase;
 import org.bson.Document;
 import org.bson.conversions.Bson;
 
@@ -38,7 +40,13 @@ public class MongoRepository<Taggregate, TKey> extends Repository<Taggregate, TK
         } catch (JsonProcessingException e) {
             e.printStackTrace();
         }
+    }
 
+    private boolean accountExists(String accountId) {
+
+        MongoCollection<Document> collection =  this.client.getDatabase(database).getCollection(collectionName);
+        Document existingAccount = collection.find(eq("accountId", accountId)).first();
+        return existingAccount != null;
     }
 
     @Override
@@ -46,7 +54,10 @@ public class MongoRepository<Taggregate, TKey> extends Repository<Taggregate, TK
         ObjectMapper mapper = new ObjectMapper();
         try {
             Document document = Document.parse(mapper.writeValueAsString(aggregate));
-            //this.client.getDatabase(database).getCollection(collectionName).insertOne(document);
+            Boolean accountExists = accountExists("9997");
+            if (!accountExists) {
+                this.client.getDatabase(database).getCollection(collectionName).insertOne(document);
+            }
             Bson filter = new Document("accountId", "9997");
             Bson updateOperation = new Document("$set", document);
             this.client.getDatabase(database).getCollection(collectionName).updateOne(filter, updateOperation);

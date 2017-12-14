@@ -39,26 +39,17 @@ import static org.axonframework.commandhandling.GenericCommandMessage.asCommandM
 @Path("/banking")
 public class BankingResource {
 
-
     private Configuration config;
 
     public BankingResource() {
 
-        //final MongoEventStorageEngine engine = mongoEventStorageEngine();
-
-
         config = DefaultConfigurer.defaultConfiguration()
                 .configureAggregate(Account.class)
-                //.configureCommandBus(c -> new SimpleCommandBus())
-                //.configureCommandBus(c -> new AsynchronousCommandBus())
                 .configureEmbeddedEventStore(c -> mongoEventStorageEngine())
-                //.configureEmbeddedEventStore(c -> new InMemoryEventStorageEngine())
                 .buildConfiguration();
 
         config.start();
-
     }
-
 
     private MongoEventStorageEngine mongoEventStorageEngine(){
 
@@ -72,32 +63,17 @@ public class BankingResource {
     private MongoTemplate mongoTemplate(){
 
         MongoClient client = new MongoClient("127.0.0.1", 27017);
-
         return new DefaultMongoTemplate(client, "axon", "domainevents", "snapshotevents");
     }
 
     private JdbcEventStorageEngine jdbcEventStorageEngine() throws SQLException, NamingException {
 
-
-//        Jdbc3PoolingDataSource source = new Jdbc3PoolingDataSource();
-//        source.setDataSourceName("A Data Source");
-//        source.setServerName("localhost");
-//        source.setDatabaseName("test");
-//        source.setUser("testuser");
-//        source.setPassword("testpassword");
-//        source.setMaxConnections(10);
-//        new InitialContext().rebind("DataSource", source);
-//
-//        DataSource source = (DataSource) new InitialContext().lookup("DataSource");
-
         ConnectionProvider provider = new DataSourceConnectionProvider(null);
-
         return new JdbcEventStorageEngine(null,
                 null,null,provider,null);
     }
 
     MongoRepository<AccountBalance, String> repository = new MongoRepository<AccountBalance, String>(new MongoClient(), "BankAccounts", "Accounts");
-
 
     @GET
     @Path("/balance/{accountId}")
@@ -143,7 +119,4 @@ public class BankingResource {
 
         return Response.noContent().build();
     }
-
-
-
 }
